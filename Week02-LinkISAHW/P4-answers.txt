@@ -1,0 +1,18 @@
+> Part 4, subpart a (see the lab writeup, part 4a)
+*** answers for ssb3vk --- by 0.0% late penalty deadline ******
+> Write your assembly code below.
+---answer---
+movq %r10, %rax
+imulq %r9, %rax
+imulq %r11 , %r8
+addq %rax, %r8
+movq %r13, %rax
+imulq %r12, %rax
+andq %rax, %r8
+---end of answer---
+---comments---
+All I did here was just use r8 from the beginning instead of rbx in 
+the 3-5 rows.
+
+---end of comments---
+

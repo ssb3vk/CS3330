@@ -1,0 +1,50 @@
+> Part 3a (see lab writeup, part 3, subpart a)
+***
+> Describe how performed the calculations to get the below answers.
+---answer---
+A key part of this was making partitions, something that I recently 
+learned from my probability class. We created two partitions of the 
+commands. One set of mov/non-mov commands and another set of 
+register/memory commands. We obtain the set of register related 
+instructions by adding together the instructions from (including 
+mov/non-mov): 
+
+non-mov instructions with two register operands
+register-to-register unconditional movs
+register-to-register conditional movs
+We get the set of memory related non-mov instructions by: 
+Subtracting "non-mov instructions with two register operands" from 
+"non-mov instructions with two operands" giving us the non-mov 
+instructions that employ memory operands. 
+
+Finally, we subtract the above two values from the set of total 
+instructions to get the number of memory related mov instructions. 
+
+We then mutliply the number of commands in the memory partition by 
+three and the commands in the register partition by 1. Adding them 
+together gives us the number of cycles. Dividing by the clock-speed of
+ the respective CPU gives us the time it takes.
+
+---end of answer---
+
+***
+> About how many times faster for the blocked-matmul program on the 16-register processor? If the program would take half the time write something like 2.0. If it would take twice the time write something like 0.50. Write your estimate to at least two significant figures.
+Answer: 1.02
+---comments---
+=time for blocked-matmul-with-8-regs/blocked-matmul = 
+1.99482472/1.959560521 = 1.0179959738 seconds
+
+(all values are pre-converted to time)
+Interesting, blocked-matmul is slower on the 16-register processor.
+---end of comments---
+
+***
+> About how many times faster for the queens program on the 16-register processor? Write your estimate to at least two significant figures.
+Answer: 0.96
+---comments---
+=time for queens-with-8-regs/queens = 0.07530794/0.078392242 = 
+0.96065552 seconds
+
+(all values are already converted to time)
+---end of comments---
+

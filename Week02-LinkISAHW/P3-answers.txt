@@ -1,0 +1,88 @@
+> Part 3a (See the homework writeup, part 3, subpart a.)
+*** answers for ssb3vk --- by 0.0% late penalty deadline ******
+> Please briefly describe how you computed your answers below (so we can give partial credit in case it's otherwise not clear how you got your answers).
+---answer---
+For this problem I calculated the number of instructions that were in 
+each of the buckets 0-32 bits, 32-48 bits, and 48-64 bits by 
+subtracting the larger category from the smaller category: 
+
+instructions to construct a 0-32-bit signed value: 
+instructions with non-zero immediate that fits in 32 bit (or smaller) 
+signed number
+
+instructions to construct a 32-48-bit signed value
+instructions with non-zero immediate that fits in 48 bit (or smaller) 
+signed number - instructions with non-zero immediate that fits in 32 
+bit (or smaller) signed number
+
+instructions to construct a 48-64-bit signed value
+instructions with non-zero immediate - instructions with non-zero 
+immediate that fits in 48 bit (or smaller) signed number
+
+I then multiplied each subtraction by the respective increase in 
+issued instructions, 1, 3, 4, summed them all together, added the 
+total number of issued instructions, and divided by the total number 
+of issued instructions to get my answer. 
+
+gcc-queens example:
+(1 * 87550930 + 3 * 2888265 + 4 * 3117364 + 273560229) / 273560229 = 
+1.341996201
+
+---end of answer---
+
+***
+> About how many times more instructions would the "blocked matmul" execute? For example, it would execute twice the instructions, write 2.00. If it would execute half the instructions, write 0.500. Include at least three significant figures in your estimate.
+Answer: 1.50
+
+***
+> About how many times more instructions would the "gull" program execute?
+Answer: 1.45
+
+***
+> About how many times more instructions would the "gcc queens" program execute?
+Answer: 1.34
+
+> Part 3b (See the homework writeup, part 3, subpart b.)
+*** answers for ssb3vk --- by 0.0% late penalty deadline ******
+> Please briefly describe how you computed your answers below (so we can give partial credit in case it's otherwise not clear how you got your answers).
+---answer---
+For this problem I calculated the number of instructions that were in 
+each of the buckets 0-32 bits, 32-48 bits, and 48-64 bits by 
+subtracting the larger category from the smaller category: 
+
+instructions to construct a 0-32-bit signed value: 
+instructions with non-zero immediate that fits in 32 bit (or smaller) 
+signed number
+
+instructions to construct a 32-48-bit signed value
+instructions with non-zero immediate that fits in 48 bit (or smaller) 
+signed number - instructions with non-zero immediate that fits in 32 
+bit (or smaller) signed number
+
+instructions to construct a 48-64-bit signed value
+instructions with non-zero immediate - instructions with non-zero 
+immediate that fits in 48 bit (or smaller) signed number
+
+I then multiplied each subtraction by the respective increase in 
+recorded instructions, 1, 3, 4, summed them all together, added the 
+total number of recorded instructions, and divided by the total number
+ of recorded instructions to get my answer. 
+
+gcc-queens example:
+(1 * 1732440 + 3 * 19999 + 4 * 16544 + 4950904) / 4950904 = 
+1.375408814
+
+---end of answer---
+
+***
+> About how many times more instructions would the "blocked matmul" contain in its executable or libraries that were executed at least once? For example, it would contain twice the instructions, write 2.00. If it would execute half the instructions, write 0.500. Include at least three significant figures in your estimate.
+Answer: 1.41
+
+***
+> About how many times more instructions would the "gull" program contain?
+Answer: 1.38
+
+***
+> About how many times more instructions would the "gcc queens" program contain?
+Answer: 1.38
+

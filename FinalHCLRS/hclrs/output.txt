@@ -1,0 +1,207 @@
++------------------- between cycles    0 and    1 ----------------------+
+| RAX:                0   RCX:                0   RDX:                0 |
+| RBX:                0   RSP:                0   RBP:                0 |
+| RSI:                0   RDI:                0   R8:                 0 |
+| R9:                 0   R10:                0   R11:                0 |
+| R12:                0   R13:                0   R14:                0 |
+| register fF(N) { pc=0000000000000000 }                                |
+| register dW(N) { icode=1 rvalA=0000000badbadbad                       |
+|  valC=0000000badbadbad Stat=1 dstE=f }                                |
+| used memory:   _0 _1 _2 _3  _4 _5 _6 _7   _8 _9 _a _b  _c _d _e _f    |
+|  0x0000000_:   30 f0 01 00  00 00 00 00   00 00 20 03                 |
++-----------------------------------------------------------------------+
+i10bytes set to 0x1f030 (reading 10 bytes from memory at pc=0x0)
+pc = 0x0; loaded [30 f0 01 00 00 00 00 00 00 00 : irmovq $0x1, %rax]
+set reg_outputA to 0x0 from register reg_srcA=15 (NONE)
+
+Values of inputs to built-in components:
+pc                   0x0000000000000000
+reg_dstE                            0xf
+reg_inputE           0x0000000badbadbad
+reg_srcA                            0xf
+Stat                                0x1
+
+Values of outputs of built-in components:
+i10bytes         0x0000000000000001f030
+reg_outputA          0x0000000000000000
+
+Values of register bank signals:
+d_dstE                              0x0
+d_icode                             0x3
+d_rvalA              0x0000000000000000
+d_Stat                              0x1
+d_valC               0x0000000000000001
+F_pc                 0x0000000000000000
+f_pc                 0x000000000000000a
+W_dstE                              0xf
+W_icode                             0x1
+W_rvalA              0x0000000badbadbad
+W_Stat                              0x1
+W_valC               0x0000000badbadbad
+
+Values of other wires:
+ifun                                0x0
+offset               0x000000000000000a
+rA                                  0xf
+rB                                  0x0
+valP                 0x000000000000000a
+
++------------------- between cycles    1 and    2 ----------------------+
+| RAX:                0   RCX:                0   RDX:                0 |
+| RBX:                0   RSP:                0   RBP:                0 |
+| RSI:                0   RDI:                0   R8:                 0 |
+| R9:                 0   R10:                0   R11:                0 |
+| R12:                0   R13:                0   R14:                0 |
+| register fF(N) { pc=000000000000000a }                                |
+| register dW(N) { icode=3 rvalA=0000000000000000                       |
+|  valC=0000000000000001 Stat=1 dstE=0 }                                |
+| used memory:   _0 _1 _2 _3  _4 _5 _6 _7   _8 _9 _a _b  _c _d _e _f    |
+|  0x0000000_:   30 f0 01 00  00 00 00 00   00 00 20 03                 |
++-----------------------------------------------------------------------+
+i10bytes set to 0x320 (reading 10 bytes from memory at pc=0xa)
+pc = 0xa; loaded [20 03 : rrmovq %rax, %rbx]
+set reg_outputA to 0x0 from register reg_srcA=0 (%rax)
+writing reg_inputE=0x1 into register reg_dstE=0 (%rax)
+
+Values of inputs to built-in components:
+pc                   0x000000000000000a
+reg_dstE                            0x0
+reg_inputE           0x0000000000000001
+reg_srcA                            0x0
+Stat                                0x1
+
+Values of outputs of built-in components:
+i10bytes         0x00000000000000000320
+reg_outputA          0x0000000000000000
+
+Values of register bank signals:
+d_dstE                              0x3
+d_icode                             0x2
+d_rvalA              0x0000000000000000
+d_Stat                              0x1
+d_valC               0x0000000000000000
+F_pc                 0x000000000000000a
+f_pc                 0x000000000000000c
+W_dstE                              0x0
+W_icode                             0x3
+W_rvalA              0x0000000000000000
+W_Stat                              0x1
+W_valC               0x0000000000000001
+
+Values of other wires:
+ifun                                0x0
+offset               0x0000000000000002
+rA                                  0x0
+rB                                  0x3
+valP                 0x000000000000000c
+
++------------------- between cycles    2 and    3 ----------------------+
+| RAX:                1   RCX:                0   RDX:                0 |
+| RBX:                0   RSP:                0   RBP:                0 |
+| RSI:                0   RDI:                0   R8:                 0 |
+| R9:                 0   R10:                0   R11:                0 |
+| R12:                0   R13:                0   R14:                0 |
+| register fF(N) { pc=000000000000000c }                                |
+| register dW(N) { icode=2 rvalA=0000000000000000                       |
+|  valC=0000000000000000 Stat=1 dstE=3 }                                |
+| used memory:   _0 _1 _2 _3  _4 _5 _6 _7   _8 _9 _a _b  _c _d _e _f    |
+|  0x0000000_:   30 f0 01 00  00 00 00 00   00 00 20 03                 |
++-----------------------------------------------------------------------+
+i10bytes set to 0x0 (reading 10 bytes from memory at pc=0xc)
+pc = 0xc; loaded [00 : halt]
+set reg_outputA to 0x0 from register reg_srcA=15 (NONE)
+writing reg_inputE=0x0 into register reg_dstE=3 (%rbx)
+
+Values of inputs to built-in components:
+pc                   0x000000000000000c
+reg_dstE                            0x3
+reg_inputE           0x0000000000000000
+reg_srcA                            0xf
+Stat                                0x1
+
+Values of outputs of built-in components:
+i10bytes         0x00000000000000000000
+reg_outputA          0x0000000000000000
+
+Values of register bank signals:
+d_dstE                              0x0
+d_icode                             0x0
+d_rvalA              0x0000000000000000
+d_Stat                              0x2
+d_valC               0x0000000000000000
+F_pc                 0x000000000000000c
+f_pc                 0x000000000000000d
+W_dstE                              0x3
+W_icode                             0x2
+W_rvalA              0x0000000000000000
+W_Stat                              0x1
+W_valC               0x0000000000000000
+
+Values of other wires:
+ifun                                0x0
+offset               0x0000000000000001
+rA                                  0x0
+rB                                  0x0
+valP                 0x000000000000000d
+
++------------------- between cycles    3 and    4 ----------------------+
+| RAX:                1   RCX:                0   RDX:                0 |
+| RBX:                0   RSP:                0   RBP:                0 |
+| RSI:                0   RDI:                0   R8:                 0 |
+| R9:                 0   R10:                0   R11:                0 |
+| R12:                0   R13:                0   R14:                0 |
+| register fF(N) { pc=000000000000000d }                                |
+| register dW(N) { icode=0 rvalA=0000000000000000                       |
+|  valC=0000000000000000 Stat=2 dstE=0 }                                |
+| used memory:   _0 _1 _2 _3  _4 _5 _6 _7   _8 _9 _a _b  _c _d _e _f    |
+|  0x0000000_:   30 f0 01 00  00 00 00 00   00 00 20 03                 |
++-----------------------------------------------------------------------+
+i10bytes set to 0x0 (reading 10 bytes from memory at pc=0xd)
+pc = 0xd; loaded [00 : halt]
+set reg_outputA to 0x0 from register reg_srcA=15 (NONE)
+
+Values of inputs to built-in components:
+pc                   0x000000000000000d
+reg_dstE                            0xf
+reg_inputE           0x0000000badbadbad
+reg_srcA                            0xf
+Stat                                0x2
+
+Values of outputs of built-in components:
+i10bytes         0x00000000000000000000
+reg_outputA          0x0000000000000000
+
+Values of register bank signals:
+d_dstE                              0x0
+d_icode                             0x0
+d_rvalA              0x0000000000000000
+d_Stat                              0x2
+d_valC               0x0000000000000000
+F_pc                 0x000000000000000d
+f_pc                 0x000000000000000e
+W_dstE                              0x0
+W_icode                             0x0
+W_rvalA              0x0000000000000000
+W_Stat                              0x2
+W_valC               0x0000000000000000
+
+Values of other wires:
+ifun                                0x0
+offset               0x0000000000000001
+rA                                  0x0
+rB                                  0x0
+valP                 0x000000000000000e
+
++----------------------- halted in state: ------------------------------+
+| RAX:                1   RCX:                0   RDX:                0 |
+| RBX:                0   RSP:                0   RBP:                0 |
+| RSI:                0   RDI:                0   R8:                 0 |
+| R9:                 0   R10:                0   R11:                0 |
+| R12:                0   R13:                0   R14:                0 |
+| register fF(N) { pc=000000000000000e }                                |
+| register dW(N) { icode=0 rvalA=0000000000000000                       |
+|  valC=0000000000000000 Stat=2 dstE=0 }                                |
+| used memory:   _0 _1 _2 _3  _4 _5 _6 _7   _8 _9 _a _b  _c _d _e _f    |
+|  0x0000000_:   30 f0 01 00  00 00 00 00   00 00 20 03                 |
++--------------------- (end of halted state) ---------------------------+
+Cycles run: 4

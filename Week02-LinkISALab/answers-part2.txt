@@ -1,0 +1,49 @@
+> Part 2: Table of ISA register counts Enter the register counts that would appear in the table below:
+***
+> 16 bit instruction, 5-bit opcode, maximum register count with 2 operands
+Answer: 32
+---comments---
+2^FLOOR[(instruction size - opcode size)/2]
+2^(FLOOR[(16-5)/2])
+---end of comments---
+
+***
+> 16 bit instruction, 5-bit opcode, maximum register count with 3 operands
+Answer: 8
+---comments---
+2^FLOOR[(instruction size - opcode size)/3]
+2^(FLOOR[(16-5)/3])
+---end of comments---
+
+***
+> 16 bit instruction, 8-bit opcode, maximum register count with 2 operands
+Answer: 16
+---comments---
+2^FLOOR[(instruction size - opcode size)/2]
+2^(FLOOR[(16-8)/2])
+---end of comments---
+
+***
+> 16 bit instruction, 8-bit opcode, maximum register count with 3 operands
+Answer: 4
+---comments---
+2^FLOOR[(instruction size - opcode size)/3]
+2^(FLOOR[(16-8)/3])
+---end of comments---
+
+***
+> 32 bit instruction, 10-bit opcode, maximum register count with 2 operands
+Answer: 2048
+---comments---
+2^FLOOR[(instruction size - opcode size)/2]
+2^(FLOOR[(32-10)/2])
+---end of comments---
+
+***
+> 32 bit instruction, 10-bit opcode, maximum register count with 3 operands
+Answer: 128
+---comments---
+2^FLOOR[(instruction size - opcode size)/3]
+2^(FLOOR[(32-10)/3])
+---end of comments---
+

@@ -1,0 +1,39 @@
+Computer Science is embarrassed by the computer.
+1 1 2 3 5 8
+4 81
+
+3: tried 2 4 8 16 32 64
+1 2 4 8 16 32
+
+868 1 1 - wrong, not even close idk what 868 is doing
+
+1: 140737488345604
+
+Lets test the sscanf function: 
+input | output
+BOBTHEBUILDER, 0
+1, 1
+2, 1
+1 2 3 4 5 6 7 8, 2
+1 2, 2
+1 2 3, 2
+1 2 3 4 5 6 7 8 9
+
+1 0-Switch statement 1
+0 1-last switch statement? 
+1 2-Switch statement 1
+1 5- switch statement 1
+1 4-switch statement 1
+2 1-switch statement 2
+3 1-jumps directly into bomb
+Loads 3 into rsi so the sscanf is only looking for 3 characters
+4 1-jumps into switch statement 3
+
+
+Breakpoints: 
+b phase_1
+b phase_2
+b explode_bomb
+b 
+
+

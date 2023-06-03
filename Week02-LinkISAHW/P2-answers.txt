@@ -1,0 +1,78 @@
+> Part 2a
+*** answers for ssb3vk --- by 0.0% late penalty deadline ******
+> (See the homework writeup, part 2, subpart a.)
+---answer---
+movq %rbx, %rcx
+addl %rcx, %rcx
+addl %rcx, %rcx
+addl %rcx, %rcx
+addl %rax, %rcx
+movq 0x1234(%rcx), %rcx
+---end of answer---
+---comments---
+The problem asked to replicate
+ 
+movq 0x1234(%rax, %rbx, 8), %rcx
+Using only offset/register addressing. To do so, I simply copy the 
+register that is multiplied into rcx, and then times rcx by 8, with 3 
+additions/doublings. Then, I add rax, to rcx. Finally, I add the 
+offset and access memory at that location to store it into rcx, 
+completing the same operation but in 6 lines. I used x86-64 in the 
+main answer but a Y86 format will be present below: 
+
+rrmovq %rbx, %rcx
+addq %rcx, %rcx
+addq %rcx, %rcx
+addq %rcx, %rcx
+addq %rax, %rcx
+mrmovq 0x1234(%rcx), %rcx
+---end of comments---
+
+> Part 2b (See the homework writeup, part 2, subpart b.)
+*** answers for ssb3vk --- by 0.0% late penalty deadline ******
+> How did you compute the estimates below? What assumptions did you make?
+---answer---
+I computed the number of extra instructions that would need to be 
+executed for each type of special addressing method as such: 
+
+disp(rXX, rYY)- 2 instructions per - 1 EXTRA instruction
+Because this would require adding together rXX, rYY and then using the
+ disp(rXX) method for the last step. To get the number of these 
+instructions, I used
+
+instructions with disp(rXX,rYY) (or disp(rXX,rYY,scale) with scale = 
+1) addressing
+
+disp(rXX, rYY, scale)- 6 instructions per - 5 EXTRA instructions
+This was proved in the prior problem
+instructions with disp(rXX,rYY,scale) or disp(,rYY,scale) addressing 
+(where scale is not 1)
+
+disp(, rYY, scale)-5 instructions per - 4 EXTRA instructions 
+One move, a maximum of three additions, and the disp(rXX) for the 
+final step
+
+instructions with disp(,rYY,scale) addressing (where scale is not 1)
+Then, using the number of EXTRA instructions, I multiplied that value 
+by the respective number of instructions for each given type and added
+ that to the total number of instructions. I took that sum and divided
+ it by the number of total instructions to get the ratio. 
+
+queens example: 
+(1 * 4603515 + 5 * 127509046 + 4 * 140 + 584158184)/584158184 = 
+1.409574527
+
+---end of answer---
+
+***
+> About how many times more instructions would the "queens" program execute? Write your answer as a number of times more instructions and include at least three significant figures in your estimate. For example, it would execute twice the instructions write 2.00. If it would execute in half the instructions, write 0.500.
+Answer: 1.41
+
+***
+> About how many times more instructions would the "gull" program execute? Write your answer as a number of times more instructions and include at least three significant figures in your estimate. For example, it would execute twice the instructions write 2.00. If it would execute in half the instructions, write 0.500.
+Answer: 1.17
+
+***
+> About how many times more instructions would the "gcc-queens" program execute? Write your answer as a number of times more instructions and include at least three significant figures in your estimate. For example, it would execute twice the instructions write 2.00. If it would execute in half the instructions, write 0.500.
+Answer: 1.09
+

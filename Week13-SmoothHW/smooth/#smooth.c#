@@ -1,0 +1,487 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "defs.h"
+#include <immintrin.h>
+
+/* 
+ * Please fill in the following team struct 
+ */
+who_t who = {
+    "InsaneVayne",           /* Scoreboard name */
+
+    "Sidhardh Burre",      /* First member full name */
+    "ssb3vk@virginia.edu",     /* First member email address */
+};
+
+/*** UTILITY FUNCTIONS ***/
+
+/* You are free to use these utility functions, or write your own versions
+ * of them. */
+
+/* A struct used to compute averaged pixel value */
+typedef struct {
+    unsigned short red;
+    unsigned short green;
+    unsigned short blue;
+    unsigned short alpha;
+    unsigned short num;
+} pixel_sum;
+
+/* Compute min and max of two integers, respectively */
+//static int min(int a, int b) { return (a < b ? a : b); }
+//static int max(int a, int b) { return (a > b ? a : b); }
+
+/* 
+ * initialize_pixel_sum - Initializes all fields of sum to 0 
+ */
+static void initialize_pixel_sum(pixel_sum *sum) 
+{
+    sum->red = sum->green = sum->blue = sum->alpha = 0;
+    sum->num = 0;
+    return;
+}
+
+/* 
+ * accumulate_sum - Accumulates field values of p in corresponding 
+ * fields of sum 
+ */
+static void accumulate_sum(pixel_sum *sum, pixel p) 
+{
+  sum->red += (int) p.red;
+  sum->green += (int) p.green;
+  sum->blue += (int) p.blue;
+  sum->alpha += (int) p.alpha;
+  sum->num++;
+  return;
+
+}
+
+/* 
+ * assign_sum_to_pixel - Computes averaged pixel value in current_pixel 
+ */
+static void assign_sum_to_pixel(pixel *current_pixel, pixel_sum sum) 
+{
+    current_pixel->red = (unsigned short) (sum.red/sum.num);
+    current_pixel->green = (unsigned short) (sum.green/sum.num);
+    current_pixel->blue = (unsigned short) (sum.blue/sum.num);
+    current_pixel->alpha = (unsigned short) (sum.alpha/sum.num);
+    return;
+}
+
+static pixel avgCORNER(int dim, int i, int j, pixel *src){
+  pixel_sum sum; 
+  pixel current_pixel; 
+
+  initialize_pixel_sum(&sum); 
+
+  accumulate_sum(&sum, src[RIDX(i, j, dim)]); 
+  accumulate_sum(&sum, src[RIDX(i + 1, j, dim)]); 
+  accumulate_sum(&sum, src[RIDX(i + 1, j + 1, dim)]); 
+  accumulate_sum(&sum, src[RIDX(i, j + 1, dim)]); 
+
+  assign_sum_to_pixel(&current_pixel, sum);
+
+  return current_pixel; 
+
+}
+
+static pixel avgHOR(int dim, int i, int j, pixel *src) {
+  pixel_sum sum;  
+  pixel current_pixel; 
+
+  initialize_pixel_sum(&sum); 
+
+  accumulate_sum(&sum, src[RIDX(i - 1, j - 1, dim)]);
+  accumulate_sum(&sum, src[RIDX(i - 1, j, dim)]); 
+  accumulate_sum(&sum, src[RIDX(i - 1, j + 1, dim)]); 
+
+  accumulate_sum(&sum, src[RIDX(i, j - 1, dim)]);
+  accumulate_sum(&sum, src[RIDX(i, j, dim)]); 
+  accumulate_sum(&sum, src[RIDX(i, j + 1, dim)]);
+
+  assign_sum_to_pixel(&current_pixel, sum);
+
+  return current_pixel; 
+
+}
+
+static pixel avgVERT(int dim, int i, int j, pixel *src) {
+  pixel_sum sum;  
+  pixel current_pixel; 
+
+  initialize_pixel_sum(&sum); 
+
+  accumulate_sum(&sum, src[RIDX(i - 1, j, dim)]);
+  accumulate_sum(&sum, src[RIDX(i, j, dim)]); 
+  accumulate_sum(&sum, src[RIDX(i + 1, j, dim)]); 
+
+  accumulate_sum(&sum, src[RIDX(i - 1, j - 1, dim)]);
+  accumulate_sum(&sum, src[RIDX(i, j - 1, dim)]); 
+  accumulate_sum(&sum, src[RIDX(i + 1, j - 1, dim)]);
+
+  assign_sum_to_pixel(&current_pixel, sum);
+
+  return current_pixel; 
+
+}
+
+
+static pixel avgMID(int dim, int i, int j, pixel *src){
+  pixel_sum sum; 
+  pixel current_pixel; 
+  
+  initialize_pixel_sum(&sum); 
+
+  accumulate_sum(&sum, src[RIDX(i - 1, j, dim)]); 
+  accumulate_sum(&sum, src[RIDX(i, j, dim)]); 
+  accumulate_sum(&sum, src[RIDX(i + 1, j, dim)]); 
+
+  accumulate_sum(&sum, src[RIDX(i - 1, j + 1, dim)]); 
+  accumulate_sum(&sum, src[RIDX(i, j + 1, dim)]); 
+  accumulate_sum(&sum, src[RIDX(i + 1, j + 1, dim)]);
+
+  accumulate_sum(&sum, src[RIDX(i - 1, j - 1, dim)]); 
+  accumulate_sum(&sum, src[RIDX(i, j - 1, dim)]); 
+  accumulate_sum(&sum, src[RIDX(i + 1, j - 1, dim)]);
+
+  assign_sum_to_pixel(&current_pixel, sum);
+
+  return current_pixel; 
+
+}
+  
+
+/* 
+ * avg - Returns averaged pixel value at (i,j) 
+ */
+
+//Sid- let's manipulate average so that we can directly calculate values on corners/edges instead of having to loop around and do the seemingly expensive max/min checks. On second thought, maybe later let's just remove the comps first. 
+
+static pixel avg(int dim, int i, int j, pixel *src) 
+{
+    pixel_sum sum;
+    pixel current_pixel;
+
+    initialize_pixel_sum(&sum);
+    
+    int dimdec = dim - 1; 
+
+    if ( i == 0 ) {
+      if ( j == 0 ) {
+	accumulate_sum(&sum, src[RIDX(i, j, dim)]); 
+	accumulate_sum(&sum, src[RIDX(i + 1, j, dim)]); 
+	accumulate_sum(&sum, src[RIDX(i + 1, j + 1, dim)]); 
+	accumulate_sum(&sum, src[RIDX(i, j + 1, dim)]); 
+
+	assign_sum_to_pixel(&current_pixel, sum);
+
+	return current_pixel; 
+
+ 
+      } if ( j == dimdec ) {
+	accumulate_sum(&sum, src[RIDX(i, j, dim)]); 
+	accumulate_sum(&sum, src[RIDX(i + 1, j, dim)]); 
+	accumulate_sum(&sum, src[RIDX(i + 1, j - 1, dim)]); 
+	accumulate_sum(&sum, src[RIDX(i, j - 1, dim)]);
+
+	assign_sum_to_pixel(&current_pixel, sum); 
+
+	return current_pixel; 
+
+
+      } else {
+	accumulate_sum(&sum, src[RIDX(i + 1, j - 1, dim)]);
+	accumulate_sum(&sum, src[RIDX(i + 1, j, dim)]); 
+	accumulate_sum(&sum, src[RIDX(i + 1, j + 1, dim)]); 
+
+	accumulate_sum(&sum, src[RIDX(i, j - 1, dim)]);
+	accumulate_sum(&sum, src[RIDX(i, j, dim)]); 
+	accumulate_sum(&sum, src[RIDX(i, j + 1, dim)]);
+
+	assign_sum_to_pixel(&current_pixel, sum); 
+
+	return current_pixel; 
+
+
+      }
+      
+      return current_pixel; 
+
+    } if ( i == dimdec ) {
+      if ( j == 0 ) {
+	accumulate_sum(&sum, src[RIDX(i, j, dim)]); 
+	accumulate_sum(&sum, src[RIDX(i - 1, j, dim)]); 
+	accumulate_sum(&sum, src[RIDX(i - 1, j + 1, dim)]); 
+	accumulate_sum(&sum, src[RIDX(i, j + 1, dim)]); 
+
+	assign_sum_to_pixel(&current_pixel, sum);
+
+	return current_pixel; 
+
+ 
+      } if ( j == dimdec ) {
+	accumulate_sum(&sum, src[RIDX(i, j, dim)]); 
+	accumulate_sum(&sum, src[RIDX(i - 1, j, dim)]); 
+	accumulate_sum(&sum, src[RIDX(i - 1, j - 1, dim)]); 
+	accumulate_sum(&sum, src[RIDX(i, j - 1, dim)]);
+
+	assign_sum_to_pixel(&current_pixel, sum); 
+
+	return current_pixel; 
+
+
+      } else {
+	accumulate_sum(&sum, src[RIDX(i - 1, j - 1, dim)]);
+	accumulate_sum(&sum, src[RIDX(i - 1, j, dim)]); 
+	accumulate_sum(&sum, src[RIDX(i - 1, j + 1, dim)]); 
+
+	accumulate_sum(&sum, src[RIDX(i, j - 1, dim)]);
+	accumulate_sum(&sum, src[RIDX(i, j, dim)]); 
+	accumulate_sum(&sum, src[RIDX(i, j + 1, dim)]);
+
+	assign_sum_to_pixel(&current_pixel, sum);
+
+	return current_pixel; 
+
+      }
+      
+      return current_pixel; 
+
+    } if ( j == 0 ) {
+      accumulate_sum(&sum, src[RIDX(i - 1, j, dim)]); 
+      accumulate_sum(&sum, src[RIDX(i, j, dim)]); 
+      accumulate_sum(&sum, src[RIDX(i + 1, j, dim)]); 
+
+      accumulate_sum(&sum, src[RIDX(i - 1, j + 1, dim)]); 
+      accumulate_sum(&sum, src[RIDX(i, j + 1, dim)]); 
+      accumulate_sum(&sum, src[RIDX(i + 1, j + 1, dim)]);
+
+      assign_sum_to_pixel(&current_pixel, sum);
+
+      return current_pixel; 
+
+    } if ( j == dimdec ) {
+      accumulate_sum(&sum, src[RIDX(i - 1, j, dim)]); 
+      accumulate_sum(&sum, src[RIDX(i, j, dim)]); 
+      accumulate_sum(&sum, src[RIDX(i + 1, j, dim)]); 
+
+      accumulate_sum(&sum, src[RIDX(i - 1, j - 1, dim)]); 
+      accumulate_sum(&sum, src[RIDX(i, j - 1, dim)]); 
+      accumulate_sum(&sum, src[RIDX(i + 1, j - 1, dim)]);
+
+      assign_sum_to_pixel(&current_pixel, sum);
+
+      return current_pixel; 
+
+    }
+
+      
+      
+
+
+    //int comp11 = max(j - 1, 0); 
+    //int comp12 = min(j+1, dim-1); 
+    for(int jj=j-1; jj <= j+1; jj++)
+      //int comp21 = max(i-1, 0); 
+      //int comp22 = min(i+1, dim-1)
+	for(int ii=i-1; ii <= i+1; ii++) 
+	    accumulate_sum(&sum, src[RIDX(ii,jj,dim)]);
+
+    assign_sum_to_pixel(&current_pixel, sum);
+ 
+    return current_pixel;
+}
+
+
+
+/******************************************************
+ * Your different versions of the smooth go here
+ ******************************************************/
+
+/* 
+ * naive_smooth - The naive baseline version of smooth
+ */
+char naive_smooth_descr[] = "naive_smooth: Naive baseline implementation";
+void naive_smooth(int dim, pixel *src, pixel *dst) 
+{
+    for (int i = 0; i < dim; i++)
+	for (int j = 0; j < dim; j++)
+            dst[RIDX(i,j, dim)] = avg(dim, i, j, src);
+}
+/* 
+ * smooth - Your current working version of smooth
+ *          Our supplied version simply calls naive_smooth
+ */
+char another_smooth_descr[] = "another_smooth: Another version of smooth";
+void another_smooth(int dim, pixel *src, pixel *dst) 
+{
+  int dimdec = dim - 1; 
+
+  dst[RIDX(0, 0, dim)] = avgCORNER(dim, 0, 0, src);
+  dst[RIDX(0, dimdec, dim)] = avgCORNER(dim, 0, dimdec - 1, src); 
+  dst[RIDX(dimdec, 0, dim)] = avgCORNER(dim, dimdec - 1, 0, src); 
+  dst[RIDX(dimdec, dimdec, dim)] = avgCORNER(dim, dimdec - 1, dimdec - 1, src); 
+
+  for (int j = 1; j < dimdec; j++) {
+    dst[RIDX(0, j, dim)] = avgHOR(dim, 1, j, src); 
+    dst[RIDX(dimdec, j, dim)] = avgHOR(dim, dimdec, j, src); 
+  }
+
+  for (int i = 1; i < dimdec; i++) {
+    dst[RIDX(i, 0, dim)] = avgVERT(dim, i, 1, src); 
+    dst[RIDX(i, dimdec, dim)] = avgVERT(dim, i, dimdec, src); 
+  }
+
+  
+  for (int i = 1; i < dimdec; i++){
+    for (int j = 1; j < dimdec; j++) {
+      dst[RIDX(i, j, dim)] = avgMID(dim, i, j, src); 
+    }
+
+  }
+
+}
+
+/*
+ *This is going to be smooth with a vectorized interior
+ *
+ */
+char smooth_vectorized_interior_descr[] = "smooth_vectorized_interior_descr: another_smooth with the interal pixels having vectorized average calculations"; 
+void smooth_vectorized_interior(int dim, pixel *src, pixel *dst)
+{
+  int dimdec = dim - 1; 
+
+  dst[RIDX(0, 0, dim)] = avgCORNER(dim, 0, 0, src);
+  dst[RIDX(0, dimdec, dim)] = avgCORNER(dim, 0, dimdec - 1, src); 
+  dst[RIDX(dimdec, 0, dim)] = avgCORNER(dim, dimdec - 1, 0, src); 
+  dst[RIDX(dimdec, dimdec, dim)] = avgCORNER(dim, dimdec - 1, dimdec - 1, src); 
+
+  for (int j = 1; j < dimdec; j++) {
+    dst[RIDX(0, j, dim)] = avgHOR(dim, 1, j, src); 
+    dst[RIDX(dimdec, j, dim)] = avgHOR(dim, dimdec, j, src); 
+  }
+
+  for (int i = 1; i < dimdec; i++) {
+    dst[RIDX(i, 0, dim)] = avgVERT(dim, i, 1, src); 
+    dst[RIDX(i, dimdec, dim)] = avgVERT(dim, i, dimdec, src); 
+  }
+
+  __m256i partial_sum = _mm256_setzero_si256();
+  unsigned short partial_sum_array[16]; 
+
+  __m256i the_pixel_above; 
+  __m256i the_pixel_inline; 
+  __m256i the_pixel_below; 
+
+
+
+  for (int i = 1; i < dimdec; i++){
+    for (int j = 1; j < dimdec; j+=2) {
+      the_pixel_above =_mm256_cvtepu8_epi16( _mm_loadu_si128((__m128i*) &src[RIDX(i - 1, j - 1, dim)]) ); 
+      the_pixel_inline =_mm256_cvtepu8_epi16( _mm_loadu_si128((__m128i*) &src[RIDX(i, j - 1, dim)]) ); 
+      the_pixel_below =_mm256_cvtepu8_epi16( _mm_loadu_si128((__m128i*) &src[RIDX(i + 1, j - 1, dim)]) ); 
+
+      partial_sum = _mm256_add_epi16(the_pixel_above, _mm256_add_epi16(the_pixel_inline, the_pixel_below) ); 
+      _mm256_storeu_si256( (__m256i*) partial_sum_array, partial_sum); 
+      
+      dst[RIDX(i, j, dim)].red = ((partial_sum_array[0] + partial_sum_array[4] + partial_sum_array[8]) * 7282) >> 16; 
+      dst[RIDX(i, j, dim)].green = ((partial_sum_array[1] + partial_sum_array[5] + partial_sum_array[9]) * 7282) >> 16; 
+      dst[RIDX(i, j, dim)].blue = ((partial_sum_array[2] + partial_sum_array[6] + partial_sum_array[10]) * 7282) >> 16; 
+      dst[RIDX(i, j, dim)].alpha = ((partial_sum_array[3] + partial_sum_array[7] + partial_sum_array[11]) * 7282) >> 16; 
+
+      dst[RIDX(i, j+1, dim)].red = ((partial_sum_array[12] + partial_sum_array[4] + partial_sum_array[8]) * 7282) >> 16; 
+      dst[RIDX(i, j+1, dim)].green = ((partial_sum_array[13] + partial_sum_array[5] + partial_sum_array[9]) * 7282) >> 16; 
+      dst[RIDX(i, j+1, dim)].blue = ((partial_sum_array[14] + partial_sum_array[6] + partial_sum_array[10]) * 7282) >> 16; 
+      dst[RIDX(i, j+1, dim)].alpha = ((partial_sum_array[15] + partial_sum_array[7] + partial_sum_array[11]) * 7282) >> 16; 
+
+    }
+
+  }
+
+}
+
+char smooth_vectorized_interior_smart_descr[] = "smooth_vectorized_interior_smart_descr: another_smooth with the interal pixels having vectorized average calculations"; 
+void smooth_vectorized_interior_smart(int dim, pixel *src, pixel *dst)
+{
+  int dimdec = dim - 1; 
+
+  __m256i partial_sum = _mm256_setzero_si256();
+  __m256i multiplier = _mm256_set1_epi16(7282); 
+  unsigned short partial_sum_array[16]; 
+
+  for (int i = 1; i < dimdec; i++){
+    for (int j = 1; j < dim; j+=4) {
+      partial_sum = _mm256_cvtepu8_epi16( _mm_loadu_si128( (__m128i*) &src[RIDX(i - 1, j - 1, dim)] ) ); 
+      partial_sum = _mm256_add_epi16(partial_sum, _mm256_cvtepu8_epi16(_mm_loadu_si128( (__m128i*) &src[RIDX(i - 1, j, dim)] )) ); 
+      partial_sum = _mm256_add_epi16(partial_sum, _mm256_cvtepu8_epi16(_mm_loadu_si128( (__m128i*) &src[RIDX(i - 1, j + 1, dim)] )) ); 
+
+      partial_sum = _mm256_add_epi16(partial_sum, _mm256_cvtepu8_epi16(_mm_loadu_si128( (__m128i*) &src[RIDX(i, j - 1, dim)] )) ); 
+      partial_sum = _mm256_add_epi16(partial_sum, _mm256_cvtepu8_epi16(_mm_loadu_si128( (__m128i*) &src[RIDX(i, j, dim)] )) ); 
+      partial_sum = _mm256_add_epi16(partial_sum, _mm256_cvtepu8_epi16(_mm_loadu_si128( (__m128i*) &src[RIDX(i, j + 1, dim)] )) ); 
+
+      partial_sum = _mm256_add_epi16(partial_sum, _mm256_cvtepu8_epi16(_mm_loadu_si128( (__m128i*) &src[RIDX(i + 1, j - 1, dim)] )) ); 
+      partial_sum = _mm256_add_epi16(partial_sum, _mm256_cvtepu8_epi16(_mm_loadu_si128( (__m128i*) &src[RIDX(i + 1, j, dim)] )) ); 
+      partial_sum = _mm256_add_epi16(partial_sum, _mm256_cvtepu8_epi16(_mm_loadu_si128( (__m128i*) &src[RIDX(i + 1, j + 1, dim)] )) );
+
+      partial_sum = _mm256_mulhi_epi16(partial_sum, multiplier); 
+
+      //_mm_storeu_si128( (__m128i*) partial_sum_array, _mm256_extracti128_si256(partial_sum, 16)); 
+      
+      _mm256_storeu_si256( (__m256i*) partial_sum_array, partial_sum); 
+
+      dst[RIDX(i, j, dim)].red = partial_sum_array[0]; 
+      dst[RIDX(i, j, dim)].green = partial_sum_array[1];  
+      dst[RIDX(i, j, dim)].blue = partial_sum_array[2];  
+      dst[RIDX(i, j, dim)].alpha = partial_sum_array[3]; 
+
+      dst[RIDX(i, j + 1, dim)].red = partial_sum_array[4]; 
+      dst[RIDX(i, j + 1, dim)].green = partial_sum_array[5];  
+      dst[RIDX(i, j + 1, dim)].blue = partial_sum_array[6];  
+      dst[RIDX(i, j + 1, dim)].alpha = partial_sum_array[7]; 
+
+      dst[RIDX(i, j + 2, dim)].red = partial_sum_array[8]; 
+      dst[RIDX(i, j + 2, dim)].green = partial_sum_array[9];  
+      dst[RIDX(i, j + 2, dim)].blue = partial_sum_array[10];  
+      dst[RIDX(i, j + 2, dim)].alpha = partial_sum_array[11]; 
+
+      dst[RIDX(i, j + 3, dim)].red = partial_sum_array[12]; 
+      dst[RIDX(i, j + 3, dim)].green = partial_sum_array[13];  
+      dst[RIDX(i, j + 3, dim)].blue = partial_sum_array[14];  
+      dst[RIDX(i, j + 3, dim)].alpha = partial_sum_array[15]; 
+
+    }
+
+  }
+
+  dst[RIDX(0, 0, dim)] = avgCORNER(dim, 0, 0, src);
+  dst[RIDX(0, dimdec, dim)] = avgCORNER(dim, 0, dimdec - 1, src); 
+  dst[RIDX(dimdec, 0, dim)] = avgCORNER(dim, dimdec - 1, 0, src); 
+  dst[RIDX(dimdec, dimdec, dim)] = avgCORNER(dim, dimdec - 1, dimdec - 1, src); 
+
+  for (int j = 1; j < dimdec; j++) {
+    dst[RIDX(0, j, dim)] = avgHOR(dim, 1, j, src); 
+    dst[RIDX(dimdec, j, dim)] = avgHOR(dim, dimdec, j, src); 
+  }
+
+  for (int i = 1; i < dimdec; i++) {
+    dst[RIDX(i, 0, dim)] = avgVERT(dim, i, 1, src); 
+    dst[RIDX(i, dimdec, dim)] = avgVERT(dim, i, dimdec, src); 
+  }
+
+}
+
+
+/*********************************************************************
+ * register_smooth_functions - Register all of your different versions
+ *     of the smooth function by calling the add_smooth_function() for
+ *     each test function. When you run the benchmark program, it will
+ *     test and report the performance of each registered test
+ *     function.  
+ *********************************************************************/
+
+void register_smooth_functions() {
+    add_smooth_function(&naive_smooth, naive_smooth_descr);
+    add_smooth_function(&another_smooth, another_smooth_descr);
+    add_smooth_function(&smooth_vectorized_interior, smooth_vectorized_interior_descr); 
+    add_smooth_function(&smooth_vectorized_interior_smart, smooth_vectorized_interior_smart_descr); 
+}

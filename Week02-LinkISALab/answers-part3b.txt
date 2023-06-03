@@ -1,0 +1,23 @@
+> Part 3b (see lab writeup, part 3, subpart b)
+***
+---answer---
+The reason it may be faster to compute on values in memory instead of 
+loading these instructions into registers may be due to better 
+addressing modes in x86-64. For example, suppose that we have a value 
+of 0xFFFFFFFF someplace in memory in x86-64. Instead of loading that 
+value into memory and then bitshifting, it may be easier to simply 
+extract the necessary amount of that value, replicating bitshifting 
+with a single memory access commmand.
+
+Also maybe due to stack interaction? Having a lower number of 
+registers could ensure that a lower number of values need to be 
+pushed/popped from the stack when calling/returning. This may be a big
+ optimization in the matmul program which has lots of variables and 
+operations. 
+
+In values that can only be stored in the register, the compiler has to
+ carefully manage the location of the variable probably in some sort 
+of memory table. But if everything in memory maybe not so much?
+
+---end of answer---
+

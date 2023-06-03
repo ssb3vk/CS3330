@@ -1,0 +1,29 @@
+> Part 1: Linking
+*** answers for ssb3vk --- by 0.0% late penalty deadline ******
+> Paste your executable file here.
+---answer---
+0x000: 30f40000010000000000
+0x00a: 30f66400000000000000
+0x014: 80
+0x015: 2000000000000000
+0x01d: 00
+0x020 2067
+0x022 80
+0x023 3000000000000000
+0x02b 90
+0x030 6300
+0x032 6277
+0x034 73 54 00000000000000
+0x03d 30f80100000000000000
+0x047 6187
+0x049 6060
+0x04b 70 32 00000000000000
+0x054 90
+---end of answer---
+---comments---
+Pasted in order: square-main, square, multiply. Each with a unique 
+offset, 0, 0x20, and 0x30 respectively replacing each of the locations
+ in the relocation table with their new offset.
+
+---end of comments---
+
